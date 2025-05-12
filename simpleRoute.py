@@ -18,9 +18,9 @@ def hello_name(name):
    return 'Hello %s!' % name
 
 #usiamo l'url per estrarre il dato che andiamo a mostrare
-@app.route('/success/<name>/<age>')
-def success(name, age):
-    return (f"ti chiami {name} e hai {age} anni")
+@app.route('/success/<user>/<age>')
+def success(user, age):
+    return f"ti chiami { user } e hai { age } anni"
 
 @app.route('/insert')
 def try_login():
@@ -30,12 +30,11 @@ def try_login():
 # semplice login non sicuro che usa sia il metodo POST che GET
 @app.route('/login', methods=['POST', 'GET'])
 def login():
+    print(request.form)
     user = request.form["name"]
     age = request.form["age"]
-    if request.method == 'POST':
-        return redirect(url_for('success', name=user, age=age))
-    else:
-        return redirect(url_for('success', name=user, age=age))
+
+    return render_template("responseForm.html", user=user, age=age)
 
 
 # main driver function
@@ -43,4 +42,4 @@ if __name__ == '__main__':
 
     # run() method of Flask class runs the application 
     # on the local development server.
-    app.run()
+    app.run(debug=True)
