@@ -1,5 +1,5 @@
 
-from flask import Flask, redirect, url_for, request
+from flask import Flask, redirect, render_template, url_for, request
 
 # Flask constructor takes the name of 
 # current module (__name__) as argument.
@@ -18,20 +18,24 @@ def hello_name(name):
    return 'Hello %s!' % name
 
 #usiamo l'url per estrarre il dato che andiamo a mostrare
-@app.route('/success/<name>')
-def success(name):
-    return 'welcome %s' % name
+@app.route('/success/<name>/<age>')
+def success(name, age):
+    return (f"ti chiami {name} e hai {age} anni")
+
+@app.route('/insert')
+def try_login():
+ return render_template('simpleForm.html')
 
 
 # semplice login non sicuro che usa sia il metodo POST che GET
 @app.route('/login', methods=['POST', 'GET'])
 def login():
+    user = request.form["name"]
+    age = request.form["age"]
     if request.method == 'POST':
-        user = request.form['nm']
-        return redirect(url_for('success', name=user))
+        return redirect(url_for('success', name=user, age=age))
     else:
-        user = request.args.get('nm')
-        return redirect(url_for('success', name=user))
+        return redirect(url_for('success', name=user, age=age))
 
 
 # main driver function
