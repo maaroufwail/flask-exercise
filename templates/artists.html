@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista Utenti</title>
+    <style>
+        ul,li{
+            display: inline;
+        }
+        a{
+            margin-left: 10px;
+            display: inline;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista Utenti</h1>
+    <ul>
+        {% for artist in artists %}
+        <li>{{ artist['name'] }}</li>
+        <a href="{{ url_for('album', artist_id=artist['Artistid']) }}">Visualizza Album</a>
+        
+        <br><br>
+        {% endfor %}
+    </ul>
+<script>
+
+
+</script>
+</body>
+</html>

@@ -1,5 +1,18 @@
 
 from flask import Flask, redirect, render_template, url_for, request
+import sqlite3
+
+import os
+
+# Percorso del database
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, './database/chinook.db')
+
+def get_db_connection():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row  # Per accedere ai risultati come dizionari
+    return conn
+
 
 # Flask constructor takes the name of 
 # current module (__name__) as argument.
@@ -20,21 +33,41 @@ def hello_name(name):
 #usiamo l'url per estrarre il dato che andiamo a mostrare
 @app.route('/success/<user>/<age>')
 def success(user, age):
+    print(request.form["name"])
     return f"ti chiami { user } e hai { age } anni"
 
-@app.route('/insert')
+@app.route('/ricerca')
 def try_login():
  return render_template('simpleForm.html')
 
+@app.route('/artists')
+def list_users():
+    conn = get_db_connection()
+    artists = conn.execute('SELECT * FROM artists').fetchall()
+    conn.close()
+    return render_template('artists.html', artists=artists)
 
-# semplice login non sicuro che usa sia il metodo POST che GET
-@app.route('/login', methods=['POST', 'GET'])
+# semplice ricerca di un artista 
+@app.route('/ricerca-artista', methods=['POST', 'GET'])
 def login():
-    print(request.form)
     user = request.form["name"]
-    age = request.form["age"]
+    conn= get_db_connection()
+    query = "SELECT * FROM artists WHERE name LIKE ?"
+    artists = conn.execute(query, (f"%{user}%",)).fetchall()
+    print(artists)
+    conn.close()
 
-    return render_template("responseForm.html", user=user, age=age)
+    return render_template("artists.html", artists=artists) 
+
+#visualizzazione degli album di un artista 
+@app.route('/album/<artist_id>')
+def album(artist_id):
+    conn = get_db_connection()
+    query = "SELECT * FROM albums WHERE Artistid = ?"
+    albums = conn.execute(query, (artist_id,)).fetchall()
+    print(albums)
+    conn.close()
+    return render_template("albums.html", albums=albums)
 
 
 # main driver function
