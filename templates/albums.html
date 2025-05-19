@@ -1,13 +1,106 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Album artista </title>
+    <title>Album albuma </title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 30px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            max-width: 700px;
+            margin: 30px auto;
+        }
+        .album-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            margin-bottom: 18px;
+            padding: 16px 12px;
+            gap: 12px;
+        }
+        .album-id, .album-title {
+            font-size: 1.1em;
+            color: #222;
+            margin-right: 10px;
+        }
+        .album-id {
+            font-weight: bold;
+            color: #4a90e2;
+            min-width: 40px;
+        }
+        .album-title {
+            flex: 1 1 120px;
+        }
+        a {
+            margin-left: 0;
+            margin-right: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #fff;
+            background: #4a90e2;
+            padding: 7px 14px;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+        a:hover {
+            background: #357ab8;
+        }
+        button {
+            font-weight: bold;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #b93222;
+        }
+        @media (max-width: 600px) {
+            .album-row {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 12px 8px;
+            }
+            .album-id, .album-title, a, button {
+                margin-right: 0;
+                margin-bottom: 8px;
+            }
+            a, button {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+
 </head>
 <body>
     <h1>Lista Album di </h1>
     <ul>
         {% for album in albums %}
-        <li>{{ album['title'] }}</li>
+
+        <li class="album-row">
+            <span class="album-id">{{ album['AlbumId'] }}</span>
+            <span class="album-title">{{ album['title'] }}</span>
+            <form action="{{url_for('elimina_album') }}" method="post" style="display:inline;">
+                    <input type="hidden" name="album-id" value="{{ album['AlbumId'] }}">
+                    <button type="submit">Elimina</button>
+            </form>
         {% endfor %}
     </ul>
 <script>

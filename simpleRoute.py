@@ -45,35 +45,39 @@ def try_login():
 
 
 
-
+# route per la pagina di inserimento artista e titolo del album, il titotlo è opzionale
 @app.route('/insert')
 def insert():
 
     return render_template('insertArtistAlbum.html')
 
+
+#route del effettivo inserimento dell'artista, nel caso in cui l'album non sia vuoto
+# viene inserito anche l'album, altrimenti no
 @app.route('/inserisci-artista-album', methods=['POST'])
 def inserisci_artista_album():
     # Ottieni i dati dal modulo
     artist_name = request.form['artistName']
-    #album_title = request.form['album_title']
-    insert_artist(artist_name)
+    album_title = request.form['albumTitle']
+    idArtist=insert_artist(artist_name).get("data")
+    if album_title:
+        insert_album(album_title, idArtist)
     return redirect(url_for('list_users'))
 
-@app.route('/delete' , methods=['POST'])
+
+
+@app.route('/delete-artist' , methods=['POST'])
 def elimina_artista():
-    # Ottieni i dati dal modulo
     artist_id = request.form['artist_id']
-    #album_title = request.form['album_title']
     erase_artist(artist_id)
     return redirect(url_for('list_users'))
 
 
 @app.route('/artists')
 def list_users():
-    conn = get_db_connection()
-    artists = conn.execute('SELECT * FROM artists').fetchall()
-    conn.close()
+    artists= get_artists().get("data")
     return render_template('artists.html', artists=artists)
+
 
 # semplice ricerca di un artista 
 @app.route('/ricerca-artista', methods=['POST', 'GET'])
@@ -97,6 +101,14 @@ def album(artist_id):
     conn.close()
     return render_template("albums.html", albums=albums)
 
+
+#eliminiamo un album tramite l'id dell'album
+@app.route('/delete-album' , methods=['POST'])
+def elimina_album():
+    album_id = request.form['album-id']
+    print(album_id)
+    erase_album(album_id)
+    return redirect(url_for('list_users'))
 
 # main driver function
 if __name__ == '__main__':
