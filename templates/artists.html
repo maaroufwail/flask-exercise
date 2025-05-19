@@ -2,15 +2,90 @@
 <html>
 <head>
     <title>Lista Utenti</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        ul,li{
-            display: inline;
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 0;
+            padding: 0;
         }
-        a{
-            margin-left: 10px;
-            display: inline;
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 30px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            max-width: 700px;
+            margin: 30px auto;
+        }
+        .artist-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            margin-bottom: 18px;
+            padding: 16px 12px;
+            gap: 12px;
+        }
+        .artist-id, .artist-name {
+            font-size: 1.1em;
+            color: #222;
+            margin-right: 10px;
+        }
+        .artist-id {
+            font-weight: bold;
+            color: #4a90e2;
+            min-width: 40px;
+        }
+        .artist-name {
+            flex: 1 1 120px;
+        }
+        a {
+            margin-left: 0;
+            margin-right: 10px;
             text-decoration: none;
             font-weight: bold;
+            color: #fff;
+            background: #4a90e2;
+            padding: 7px 14px;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+        a:hover {
+            background: #357ab8;
+        }
+        button {
+            font-weight: bold;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #b93222;
+        }
+        @media (max-width: 600px) {
+            .artist-row {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 12px 8px;
+            }
+            .artist-id, .artist-name, a, button {
+                margin-right: 0;
+                margin-bottom: 8px;
+            }
+            a, button {
+                width: 100%;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -18,15 +93,18 @@
     <h1>Lista Utenti</h1>
     <ul>
         {% for artist in artists %}
-        <li>{{ artist['name'] }}</li>
-        <a href="{{ url_for('album', artist_id=artist['Artistid']) }}">Visualizza Album</a>
-        
-        <br><br>
+        <li>
+            <div class="artist-row">
+                <span class="artist-id">{{ artist['Artistid'] }}</span>
+                <span class="artist-name">{{ artist['name'] }}</span>
+                <a href="{{ url_for('album', artist_id=artist['Artistid']) }}">Visualizza Album</a>
+                <form action="{{ url_for('elimina_artista') }}" method="post" style="display:inline;">
+                    <input type="hidden" name="artist_id" value="{{ artist['Artistid'] }}">
+                    <button type="submit">Elimina</button>
+                </form>
+            </div>
+        </li>
         {% endfor %}
     </ul>
-<script>
-
-
-</script>
 </body>
 </html>

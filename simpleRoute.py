@@ -1,6 +1,7 @@
 
 from flask import Flask, redirect, render_template, url_for, request
 import sqlite3
+from crudFunction import *
 
 import os
 
@@ -39,6 +40,33 @@ def success(user, age):
 @app.route('/ricerca')
 def try_login():
  return render_template('simpleForm.html')
+
+
+
+
+
+
+@app.route('/insert')
+def insert():
+
+    return render_template('insertArtistAlbum.html')
+
+@app.route('/inserisci-artista-album', methods=['POST'])
+def inserisci_artista_album():
+    # Ottieni i dati dal modulo
+    artist_name = request.form['artistName']
+    #album_title = request.form['album_title']
+    insert_artist(artist_name)
+    return redirect(url_for('list_users'))
+
+@app.route('/delete' , methods=['POST'])
+def elimina_artista():
+    # Ottieni i dati dal modulo
+    artist_id = request.form['artist_id']
+    #album_title = request.form['album_title']
+    erase_artist(artist_id)
+    return redirect(url_for('list_users'))
+
 
 @app.route('/artists')
 def list_users():
