@@ -30,8 +30,12 @@ def insert_artist(name):
 def erase_artist(ArtistId):
     try:
         conn = get_db_connection()
-        query = "DELETE FROM artists WHERE ArtistId = ?"
-        conn.execute(query, (ArtistId,))
+        # Prima elimina le tracce associate agli album dell'artista
+        conn.execute("DELETE FROM tracks WHERE AlbumId IN (SELECT AlbumId FROM albums WHERE ArtistId = ?)", (ArtistId,))
+        # Poi elimina gli album dell'artista
+        conn.execute("DELETE FROM albums WHERE ArtistId = ?", (ArtistId,))
+        # Infine elimina l'artista
+        conn.execute("DELETE FROM artists WHERE ArtistId = ?", (ArtistId,))
         conn.commit()
         conn.close()
         return {"success": True, "message": "Artista eliminato con successo."}
@@ -60,10 +64,12 @@ def insert_album(title, ArtistId):
     except Exception as e:
         return {"success": False, "message": f"Errore durante l'inserimento: {str(e)}"}
 
-# funzione per eliminare un album avendo l'id dell'album
+# funzione per eliminare un album avendo l'id dell'album e cancella anche le track che sono associate
 def erase_album(album_id):
     try:
         conn = get_db_connection()
+        query = "DELETE FROM tracks WHERE AlbumId = ?" 
+        conn.execute(query, (album_id,))
         query = "DELETE FROM albums WHERE AlbumId = ?"
         conn.execute(query, (album_id,))
         conn.commit()

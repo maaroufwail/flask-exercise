@@ -8,11 +8,11 @@
 </head>
 <body>
     <div class="container">
-       <h1>Modulo per di un nuovo album</h1>
+       <h1>Modulo per l'inserimento di un nuovo album</h1>
         <form action="{{ url_for('inserisci_album', ArtistId=ArtistId) }}" method="post">    
             <label for="albumTitle">Titolo del Album:</label>
             <input type="text" name="albumTitle" placeholder="Titolo dell'album" required>
-            <button type="submit" >inserisci_album</button>
+            <button type="submit" >inserisci album</button>
          </form>
     </div>
 
