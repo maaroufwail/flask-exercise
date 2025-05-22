@@ -1,3 +1,6 @@
+#scelte prese:
+# - le variabili che vengono passate con il form usano il camelCase
+# - le funzioni sono scritte in snake_case
 
 from flask import Flask, redirect, render_template, url_for, request
 import sqlite3
@@ -13,7 +16,6 @@ def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row  # Per accedere ai risultati come dizionari
     return conn
-
 
 # Flask constructor takes the name of 
 # current module (__name__) as argument.
@@ -65,11 +67,11 @@ def inserisci_artista_album():
     return redirect(url_for('list_users'))
 
 
-
+#devo ancora implementare una cancellazione a cascata
 @app.route('/delete-artist' , methods=['POST'])
 def elimina_artista():
-    artist_id = request.form['artist_id']
-    erase_artist(artist_id)
+    ArtistId = request.form['ArtistId']
+    erase_artist(ArtistId)
     return redirect(url_for('list_users'))
 
 
@@ -92,11 +94,11 @@ def login():
     return render_template("artists.html", artists=artists) 
 
 #visualizzazione degli album di un artista 
-@app.route('/album/<artist_id>')
-def album(artist_id):
+@app.route('/album/<ArtistId>')
+def album(ArtistId):
     conn = get_db_connection()
     query = "SELECT * FROM albums WHERE Artistid = ?"
-    albums = conn.execute(query, (artist_id,)).fetchall()
+    albums = conn.execute(query, (ArtistId,)).fetchall()
     print(albums)
     conn.close()
     return render_template("albums.html", albums=albums)
@@ -105,7 +107,7 @@ def album(artist_id):
 #eliminiamo un album tramite l'id dell'album
 @app.route('/delete-album' , methods=['POST'])
 def elimina_album():
-    album_id = request.form['album-id']
+    album_id = request.form['AlbumId']
     print(album_id)
     erase_album(album_id)
     return redirect(url_for('list_users'))

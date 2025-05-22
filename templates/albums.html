@@ -98,7 +98,7 @@
             <span class="album-id">{{ album['AlbumId'] }}</span>
             <span class="album-title">{{ album['title'] }}</span>
             <form action="{{url_for('elimina_album') }}" method="post" style="display:inline;">
-                    <input type="hidden" name="album-id" value="{{ album['AlbumId'] }}">
+                    <input type="hidden" name="AlbumId" value="{{ album['AlbumId'] }}">
                     <button type="submit">Elimina</button>
             </form>
         {% endfor %}

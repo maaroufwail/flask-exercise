@@ -27,11 +27,11 @@ def insert_artist(name):
         return {"success": False, "message": f"Errore durante l'inserimento: {str(e)}"}
     
     
-def erase_artist(artist_id):
+def erase_artist(ArtistId):
     try:
         conn = get_db_connection()
         query = "DELETE FROM artists WHERE ArtistId = ?"
-        conn.execute(query, (artist_id,))
+        conn.execute(query, (ArtistId,))
         conn.commit()
         conn.close()
         return {"success": True, "message": "Artista eliminato con successo."}
@@ -49,11 +49,11 @@ def get_artists():
         return {"success": False, "message": f"Errore durante il recupero degli artisti: {str(e)}"}
     
 # funzione per inserire un album ad un artista
-def insert_album(title, artist_id):
+def insert_album(title, ArtistId):
     try:
         conn = get_db_connection()
         query = "INSERT INTO albums (Title, ArtistId) VALUES (?, ?)"
-        conn.execute(query, (title, artist_id))
+        conn.execute(query, (title, ArtistId))
         conn.commit()
         conn.close()
         return {"success": True, "message": "Album inserito con successo."}

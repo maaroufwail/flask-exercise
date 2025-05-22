@@ -97,10 +97,10 @@
             <div class="artist-row">
                 <span class="artist-id">{{ artist['Artistid'] }}</span>
                 <span class="artist-name">{{ artist['name'] }}</span>
-                <a href="{{ url_for('album', artist_id=artist['Artistid']) }}">Visualizza Album</a>
+                <a href="{{ url_for('album', ArtistId=artist['Artistid']) }}">Visualizza Album</a>
 
                 <form action="{{ url_for('elimina_artista') }}" method="post" style="display:inline;">
-                    <input type="hidden" name="artist_id" value="{{ artist['Artistid'] }}">
+                    <input type="hidden" name="ArtistId" value="{{ artist['Artistid'] }}">
                     <button type="submit">Elimina</button>
                 </form>
             </div>
