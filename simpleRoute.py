@@ -93,6 +93,7 @@ def login():
 
     return render_template("artists.html", artists=artists) 
 
+
 #visualizzazione degli album di un artista 
 @app.route('/album/<ArtistId>')
 def album(ArtistId):
@@ -111,6 +112,21 @@ def elimina_album():
     print(album_id)
     erase_album(album_id)
     return redirect(url_for('list_users'))
+
+
+#nel caso si arrivi al url senza POST darà per scontato che debbano ancora essere inseriti i dati
+# altrimenti eseguirà l'inserimento dell'album e poi reindirizzerà alla lista degli artisti
+@app.route('/album/<ArtistId>/insert-album', methods=['POST', 'GET'])
+def inserisci_album(ArtistId):
+    artist_id = ArtistId
+    if request.method == 'POST':    
+        album_title = request.form['albumTitle']
+        insert_album(album_title, artist_id)
+        return redirect(url_for('list_users'))
+    else:
+        print("non è un post")
+        return render_template('insertAlbum.html' , ArtistId=artist_id)
+
 
 # main driver function
 if __name__ == '__main__':
