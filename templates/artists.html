@@ -2,10 +2,12 @@
 <html>
 <head>
     <title>Lista Utenti</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='list.css') }}   ">
 </head>
 <body>
+    <div style=" margin: 20px;">
+        <a style="float: inline-end; background-color:rgb(94, 205, 67)" href="{{url_for('inserisci_artista_album')}}">Aggiungi artista</a>
+    </div>
     <h1>Lista Artisti</h1>
     <ul>
         {% for artist in artists %}

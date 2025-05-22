@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>track del album</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='list.css') }}   ">
+</head>
+<body>
+        <div style=" margin: 20px;">
+        <a  href="{{ url_for('list_users') }}">Torna alla Home</a>
+        <a style="float: inline-end; background-color:rgb(94, 205, 67)" href="{{ request.path.rstrip('/') }}/insert-track">Aggiungi track</a>
+    </div>
+    <h1>Brani del album</h1>
+    <ul>
+        {% for track in tracks %}
+        <li>
+            <div class="artist-row">
+                <span class="artist-id">{{ track['name'] }}</span>
+                <a href=" ">More info</a>
+            </div>
+
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

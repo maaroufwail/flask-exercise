@@ -19,6 +19,7 @@
             <span class="album-title">{{ album['title'] }}</span>
             <form id="delete-album-{{ album['AlbumId'] }}" action="{{ url_for('elimina_album') }}" method="post" style="display:inline;">
                 <input type="hidden" name="AlbumId" value="{{ album['AlbumId'] }}">
+                <a href="{{ url_for('tracks', AlbumId=album['AlbumId']) }}">tracks</a>
                 <button type="button" onclick="confirmDelete('{{ album['AlbumId'] }}')">Elimina</button>
 </form>
                     {% endfor %}

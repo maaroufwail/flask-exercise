@@ -56,15 +56,17 @@ def insert():
 
 #route del effettivo inserimento dell'artista, nel caso in cui l'album non sia vuoto
 # viene inserito anche l'album, altrimenti no
-@app.route('/inserisci-artista-album', methods=['POST'])
+@app.route('/inserisci-artista-album', methods=['POST', 'GET'])
 def inserisci_artista_album():
-    # Ottieni i dati dal modulo
-    artist_name = request.form['artistName']
-    album_title = request.form['albumTitle']
-    idArtist=insert_artist(artist_name).get("data")
-    if album_title:
-        insert_album(album_title, idArtist)
-    return redirect(url_for('list_users'))
+    if request.method != 'POST':
+        return render_template('insertArtistAlbum.html')
+    else:
+        artist_name = request.form['artistName']
+        album_title = request.form['albumTitle']
+        idArtist=insert_artist(artist_name).get("data")
+        if album_title:
+            insert_album(album_title, idArtist)
+        return redirect(url_for('list_users'))
 
 
 #devo ancora implementare una cancellazione a cascata
@@ -126,6 +128,15 @@ def inserisci_album(ArtistId):
     else:
         print("non è un post")
         return render_template('insertAlbum.html' , ArtistId=artist_id)
+    
+@app.route('/album/<AlbumId>/track')
+def tracks( AlbumId):
+    conn = get_db_connection()
+    query = "SELECT * FROM tracks WHERE AlbumId = ?"
+    tracks = conn.execute(query, (AlbumId,)).fetchall()
+    print(tracks)
+    conn.close()
+    return render_template("tracks.html", tracks=tracks)
 
 
 # main driver function
