@@ -113,7 +113,10 @@ def form_track_get_data():
         conn = get_db_connection()
         media_types = conn.execute("SELECT MediaTypeId, Name FROM media_types").fetchall()
         genres = conn.execute("SELECT GenreId, Name FROM genres").fetchall()
-        return {"success": True, "media_types":media_types, "genres":genres}
+        artists=get_artists().get("data")
+        conn.close()
+
+        return {"success": True, "media_types":media_types, "genres":genres, "artists":artists}
     except Exception as e:
         return {"success": False, "message": f"Errore durante il recupero dei generi e media types per il form delle track: {str(e)}"}
 

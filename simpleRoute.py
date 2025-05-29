@@ -154,7 +154,7 @@ def new_track():
         bytes_val = request.form.get('bytes')
         unit_price = request.form.get('unit_price')
         insert_track(track_name, album_id, media_type_id, genre_id, composer, milliseconds, bytes_val, unit_price)
-        return redirect(url_for('new_track'))
+        return redirect(url_for('list_users'))
 
     # GET: recupera le opzioni per i select
     # Per l’autocomplete, la query per gli album viene effettuata tramite un’altra route
@@ -163,8 +163,10 @@ def new_track():
         return render_template("error.html", message=form_data["message"])
     media_types = form_data["media_types"]
     genres = form_data["genres"]
+    artists = form_data["artists"]
+    artists= [{'label': artist['name'], 'value': artist['ArtistId']} for artist in artists]
 
-    return render_template("insertTrack.html",media_types=media_types, genres=genres)
+    return render_template("insertTrack.html",media_types=media_types, genres=genres, artists=artists)
 
 @app.route('/search_albums')
 def search_albums():

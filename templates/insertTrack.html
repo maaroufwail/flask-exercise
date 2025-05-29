@@ -1,83 +1,186 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <title>Crea Nuova Traccia</title>
-    <!-- Inclusione dei file CSS e JS di jQuery UI per l'autocomplete -->
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script>
-      $(function() {
-          $("#album").autocomplete({
-              source: "/search_albums", // Endpoint per cercare nomi degli album
-              minLength: 2,
-              select: function(event, ui) {
-                  // Quando viene selezionato un album, memorizza l'albumId nel campo nascosto
-                  $("#album_id").val(ui.item.value);
-              }
-          });
+  <meta charset="UTF-8">
+  <title>Crea Nuova Traccia</title>
+  <!-- Includo jQuery UI per l'autocomplete -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: #fff;
+      padding: 2.5rem 2rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(60, 72, 88, 0.15);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #3b3b3b;
+      margin-bottom: 1.5rem;
+      font-size: 1.7rem;
+      letter-spacing: 1px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #4f4f4f;
+      font-weight: 500;
+    }
+
+    /* Applico lo stile agli input text, select e input number per avere una grafica coerente */
+    input[type="text"],
+    select,
+    input[type="number"] {
+      width: 100%;
+      padding: 0.75rem 0.25rem;
+      margin-bottom: 1.2rem;
+      border: 1.5px solid #bfc9d9;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: #f7faff;
+    }
+
+    input[type="text"]:focus,
+    select:focus,
+    input[type="number"]:focus {
+      border-color: #6366f1;
+      outline: none;
+      box-shadow: 0 0 0 2px #a5b4fc55;
+      background: #fff;
+    }
+
+    button[type="submit"] {
+      background: linear-gradient(90deg, #6366f1 0%, #60a5fa 100%);
+      color: #fff;
+      padding: 0.85rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
+    }
+
+    button[type="submit"]:hover {
+      background: linear-gradient(90deg, #4f46e5 0%, #2563eb 100%);
+      transform: translateY(-2px) scale(1.01);
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 1.2rem 0.7rem;
+        border-radius: 10px;
+      }
+      h1 {
+        font-size: 1.2rem;
+      }
+      input[type="text"],
+      select,
+      input[type="number"],
+      button[type="submit"] {
+        font-size: 0.98rem;
+        padding: 0.7rem;
+      }
+    }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+    // La variabile "artists" viene passata dal backend Flask e convertita in JSON
+    // Assicurati che il backend fornisca un array di oggetti formattati come:
+    // [{ "label": "Artista 1", "value": 1 }, { "label": "Artista 2", "value": 2 }, …]
+    var artists = {{ artists | tojson }};
+
+    $(function() {
+      $("#artist").autocomplete({
+        source: artists,
+        minLength: 2,
+        select: function(event, ui) {
+          // Imposto il valore visibile e quello nascosto usando i valori passati dall'oggetto
+          $("#artist").val(ui.item.label);
+          $("#artist_id").val(ui.item.value);
+          return false;
+        }
       });
-    </script>
+    });
+  </script>
 </head>
 <body>
-   <h1>Crea Nuova Traccia</h1>
-   <form method="post">
+  <div class="container">
+    <h1>Crea Nuova Traccia</h1>
+    <form method="post">
       <div>
-         <label for="name">Nome:</label>
-         <input type="text" id="name" name="name" required>
+        <label for="name">Nome:</label>
+        <input type="text" id="name" name="name" required>
       </div>
 
       <div>
-         <label for="album">Album:</label>
-         <!-- Campo di testo per l'autocomplete; il nome visibile dell'album verrà cercato -->
-         <input type="text" id="album" name="album" placeholder="Cerca album..." required>
-         <!-- Campo nascosto che memorizza l'ID dell'album selezionato -->
-         <input type="hidden" id="album_id" name="album_id">
+        <label for="artist">Artista:</label>
+        <input type="text" id="artist" name="artist" placeholder="Cerca artista..." autocomplete="off" required>
+        <!-- Campo nascosto per memorizzare l'ID dell'artista selezionato -->
+        <input type="hidden" id="artist_id" name="artist_id">
       </div>
 
       <div>
-         <label for="media_type_id">Tipo Media:</label>
-         <select id="media_type_id" name="media_type_id" required>
-            {% for mt in media_types %}
-                <option value="{{ mt['MediaTypeId'] }}">{{ mt['Name'] }}</option>
-            {% endfor %}
-         </select>
-      </div>
-      
-      <div>
-         <label for="genre_id">Genere:</label>
-         <select id="genre_id" name="genre_id">
-            <option value="">Seleziona genere</option>
-            {% for g in genres %}
-                <option value="{{ g['GenreId'] }}">{{ g['Name'] }}</option>
-            {% endfor %}
-         </select>
-      </div>
-      
-      <div>
-         <label for="composer">Compositore:</label>
-         <input type="text" id="composer" name="composer">
+        <label for="media_type_id">Tipo Media:</label>
+        <select id="media_type_id" name="media_type_id" required>
+          {% for mt in media_types %}
+            <option value="{{ mt['MediaTypeId'] }}">{{ mt['Name'] }}</option>
+          {% endfor %}
+        </select>
       </div>
 
       <div>
-         <label for="milliseconds">Millisecondi:</label>
-         <input type="number" id="milliseconds" name="milliseconds" required>
+        <label for="genre_id">Genere:</label>
+        <select id="genre_id" name="genre_id" required>
+          <option value="">Seleziona genere</option>
+          {% for g in genres %}
+            <option value="{{ g['GenreId'] }}">{{ g['Name'] }}</option>
+          {% endfor %}
+        </select>
       </div>
 
       <div>
-         <label for="bytes">Bytes:</label>
-         <input type="number" id="bytes" name="bytes">
+        <label for="composer">Compositore:</label>
+        <input type="text" id="composer" name="composer" required>
       </div>
 
       <div>
-         <label for="unit_price">Prezzo:</label>
-         <input type="number" step="0.01" id="unit_price" name="unit_price" required>
+        <label for="milliseconds">Millisecondi:</label>
+        <input type="number" id="milliseconds" name="milliseconds" required>
       </div>
 
       <div>
-         <button type="submit">Salva</button>
+        <label for="bytes">Bytes:</label>
+        <input type="number" id="bytes" name="bytes" required>
       </div>
-   </form>
+
+      <div>
+        <label for="unit_price">Prezzo:</label>
+        <input type="number" step="0.01" id="unit_price" name="unit_price" required>
+      </div>
+
+      <div>
+        <button type="submit">Salva</button>
+      </div>
+    </form>
+  </div>
 </body>
 </html>
