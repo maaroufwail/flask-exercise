@@ -2,7 +2,7 @@
 # - le variabili che vengono passate con il form usano il camelCase
 # - le funzioni sono scritte in snake_case
 
-from flask import Flask, redirect, render_template, url_for, request
+from flask import Flask, jsonify, redirect, render_template, url_for, request
 import sqlite3
 from crudFunction import *
 
@@ -129,6 +129,8 @@ def inserisci_album(ArtistId):
         print("non è un post")
         return render_template('insertAlbum.html' , ArtistId=artist_id)
     
+# Zone per la gestione delle tracce
+    
 @app.route('/album/<AlbumId>/track')
 def tracks( AlbumId):
     conn = get_db_connection()
@@ -137,6 +139,41 @@ def tracks( AlbumId):
     print(tracks)
     conn.close()
     return render_template("tracks.html", tracks=tracks)
+
+@app.route('/track/new', methods=['GET', 'POST'])
+def new_track():
+    if request.method == 'POST':
+        # Recupera i dati inviati dal form
+        track_name = request.form.get('name')
+        # Per Album usiamo il campo nascosto che contiene l’ID selezionato dall’autocomplete
+        album_id = request.form.get('album_id')
+        media_type_id = request.form.get('media_type_id')
+        genre_id = request.form.get('genre_id')
+        composer = request.form.get('composer')
+        milliseconds = request.form.get('milliseconds')
+        bytes_val = request.form.get('bytes')
+        unit_price = request.form.get('unit_price')
+        insert_track(track_name, album_id, media_type_id, genre_id, composer, milliseconds, bytes_val, unit_price)
+        return redirect(url_for('new_track'))
+
+    # GET: recupera le opzioni per i select
+    # Per l’autocomplete, la query per gli album viene effettuata tramite un’altra route
+    form_data = form_track_get_data()
+    if not form_data["success"]:
+        return render_template("error.html", message=form_data["message"])
+    media_types = form_data["media_types"]
+    genres = form_data["genres"]
+
+    return render_template("insertTrack.html",media_types=media_types, genres=genres)
+
+@app.route('/search_albums')
+def search_albums():
+    # Questa route serve per restituire in JSON i suggerimenti per l’autocomplete degli album
+    term = request.args.get('term', '')
+    albums = search_albums(term)
+    # Costruiamo l’elenco di suggerimenti nel formato compatibile con jQuery UI Autocomplete
+    suggestions = [{'label': album['Title'], 'value': album['AlbumId']} for album in albums]
+    return jsonify(suggestions)
 
 
 # main driver function

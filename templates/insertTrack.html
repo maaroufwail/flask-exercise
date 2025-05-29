@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Crea Nuova Traccia</title>
+    <!-- Inclusione dei file CSS e JS di jQuery UI per l'autocomplete -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+      $(function() {
+          $("#album").autocomplete({
+              source: "/search_albums", // Endpoint per cercare nomi degli album
+              minLength: 2,
+              select: function(event, ui) {
+                  // Quando viene selezionato un album, memorizza l'albumId nel campo nascosto
+                  $("#album_id").val(ui.item.value);
+              }
+          });
+      });
+    </script>
+</head>
+<body>
+   <h1>Crea Nuova Traccia</h1>
+   <form method="post">
+      <div>
+         <label for="name">Nome:</label>
+         <input type="text" id="name" name="name" required>
+      </div>
+
+      <div>
+         <label for="album">Album:</label>
+         <!-- Campo di testo per l'autocomplete; il nome visibile dell'album verrà cercato -->
+         <input type="text" id="album" name="album" placeholder="Cerca album..." required>
+         <!-- Campo nascosto che memorizza l'ID dell'album selezionato -->
+         <input type="hidden" id="album_id" name="album_id">
+      </div>
+
+      <div>
+         <label for="media_type_id">Tipo Media:</label>
+         <select id="media_type_id" name="media_type_id" required>
+            {% for mt in media_types %}
+                <option value="{{ mt['MediaTypeId'] }}">{{ mt['Name'] }}</option>
+            {% endfor %}
+         </select>
+      </div>
+      
+      <div>
+         <label for="genre_id">Genere:</label>
+         <select id="genre_id" name="genre_id">
+            <option value="">Seleziona genere</option>
+            {% for g in genres %}
+                <option value="{{ g['GenreId'] }}">{{ g['Name'] }}</option>
+            {% endfor %}
+         </select>
+      </div>
+      
+      <div>
+         <label for="composer">Compositore:</label>
+         <input type="text" id="composer" name="composer">
+      </div>
+
+      <div>
+         <label for="milliseconds">Millisecondi:</label>
+         <input type="number" id="milliseconds" name="milliseconds" required>
+      </div>
+
+      <div>
+         <label for="bytes">Bytes:</label>
+         <input type="number" id="bytes" name="bytes">
+      </div>
+
+      <div>
+         <label for="unit_price">Prezzo:</label>
+         <input type="number" step="0.01" id="unit_price" name="unit_price" required>
+      </div>
+
+      <div>
+         <button type="submit">Salva</button>
+      </div>
+   </form>
+</body>
+</html>
