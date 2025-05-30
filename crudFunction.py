@@ -25,6 +25,17 @@ def insert_artist(name):
         return {"success": True, "message": "Artista inserito con successo.", "data": id}
     except Exception as e:
         return {"success": False, "message": f"Errore durante l'inserimento dell'artista: {str(e)}"}
+
+def update_artist(artist_id, new_name):
+    try:
+        conn = get_db_connection()
+        query = "UPDATE artists SET name = ? WHERE ArtistId = ?"
+        conn.execute(query, (new_name, artist_id))
+        conn.commit()
+        conn.close()
+        return {"success": True, "message": "Artista aggiornato con successo."}
+    except Exception as e:
+        return {"success": False, "message": f"Errore durante l'aggiornamento dell'artista: {str(e)}"}
     
     
 def erase_artist(ArtistId):
@@ -77,6 +88,17 @@ def erase_album(album_id):
         return {"success": True, "message": "Album eliminato con successo."}
     except Exception as e:
         return {"success": False, "message": f"Errore durante l'eliminazione dell'album: {str(e)}"}
+
+def update_album(album_id, new_title):
+    try:
+        conn = get_db_connection()
+        query = "UPDATE albums SET Title = ? WHERE AlbumId = ?"
+        conn.execute(query, (new_title, album_id))
+        conn.commit()
+        conn.close()
+        return {"success": True, "message": "Album aggiornato con successo."}
+    except Exception as e:
+        return {"success": False, "message": f"Errore durante l'aggiornamento dell'album: {str(e)}"}
     
 
 def search_albums(title):
