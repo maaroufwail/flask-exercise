@@ -3,6 +3,7 @@
 # - le funzioni sono scritte in snake_case
 
 from flask import Flask, jsonify, redirect, render_template, url_for, request
+from flask_debugtoolbar import DebugToolbarExtension 
 import sqlite3
 from crudFunction import *
 
@@ -20,6 +21,10 @@ def get_db_connection():
 # Flask constructor takes the name of 
 # current module (__name__) as argument.
 app = Flask(__name__)
+app.config["DEBUG"] = True
+#app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
+app.config['SECRET_KEY'] = 'che-brutto-il-debugging'  # Necessaria per la toolbar
+toolbar = DebugToolbarExtension(app)
 
 # la funzione route va a dirci a quali url va a rispondere la nostra applicazione
 # visto che usiamo '/' come url, risponderà solo al caso univoco, usare una regex per 
@@ -99,11 +104,7 @@ def login():
 #visualizzazione degli album di un artista 
 @app.route('/album/<ArtistId>')
 def album(ArtistId):
-    conn = get_db_connection()
-    query = "SELECT * FROM albums WHERE Artistid = ?"
-    albums = conn.execute(query, (ArtistId,)).fetchall()
-    print(albums)
-    conn.close()
+    albums = get_albums(ArtistId).get("data")
     return render_template("albums.html", albums=albums)
 
 
@@ -132,13 +133,13 @@ def inserisci_album(ArtistId):
 # Zone per la gestione delle tracce
     
 @app.route('/album/<AlbumId>/track')
-def tracks( AlbumId):
+def tracks(AlbumId):
     conn = get_db_connection()
     query = "SELECT * FROM tracks WHERE AlbumId = ?"
     tracks = conn.execute(query, (AlbumId,)).fetchall()
     print(tracks)
     conn.close()
-    return render_template("tracks.html", tracks=tracks)
+    return render_template("tracks.html",  tracks=tracks, AlbumId=AlbumId)
 
 @app.route('/track/new', methods=['GET', 'POST'])
 def new_track():
@@ -165,8 +166,58 @@ def new_track():
     genres = form_data["genres"]
     artists = form_data["artists"]
     artists= [{'label': artist['name'], 'value': artist['ArtistId']} for artist in artists]
+    albums = get_albums().get("data")
+    print(albums)
+    # albums= [{'label': album['Title'], 'value': album['AlbumId']} for album in albums]
 
-    return render_template("insertTrack.html",media_types=media_types, genres=genres, artists=artists)
+    return render_template("insertTrack.html",media_types=media_types, genres=genres, artists=artists , albums=albums)
+
+# si va ad aggiungere una traccia ad un album precompilando il campo album e artista
+
+@app.route('/album/<AlbumId>/track/new', methods=['GET', 'POST'])
+def new_track_from_album(AlbumId):
+    if request.method == 'POST':
+        # Recupera i dati inviati dal form
+        track_name = request.form.get('name')
+        album_id = AlbumId  # Usa l'ID dell'album passato nell'URL
+        media_type_id = request.form.get('media_type_id')
+        genre_id = request.form.get('genre_id')
+        composer = request.form.get('composer')
+        milliseconds = request.form.get('milliseconds')
+        bytes_val = request.form.get('bytes')
+        unit_price = request.form.get('unit_price')
+        
+        insert_track(track_name, album_id, media_type_id, genre_id, composer, milliseconds, bytes_val, unit_price)
+        return redirect(url_for('tracks', AlbumId=AlbumId))
+
+    # GET: recupera le informazioni dell'album e dell'artista
+    conn = get_db_connection()
+    album_info = conn.execute("""
+        SELECT a.AlbumId, a.Title as AlbumTitle, ar.ArtistId, ar.Name as ArtistName 
+        FROM albums a 
+        JOIN artists ar ON a.ArtistId = ar.ArtistId 
+        WHERE a.AlbumId = ?
+    """, (AlbumId,)).fetchone()
+    
+    if not album_info:
+        return render_template("error.html", message="Album non trovato")
+    
+    # Recupera le opzioni per i select
+    form_data = form_track_get_data()
+    if not form_data["success"]:
+        return render_template("error.html", message=form_data["message"])
+    
+    media_types = form_data["media_types"]
+    genres = form_data["genres"]
+    conn.close()
+
+    return render_template("insertTrackWithPreset.html", 
+                         media_types=media_types, 
+                         genres=genres, 
+                         album_info=album_info)
+
+
+
 
 @app.route('/search_albums')
 def search_albums():

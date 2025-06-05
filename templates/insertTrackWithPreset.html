@@ -1,10 +1,7 @@
-<!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Crea Nuova Traccia</title>
-  <!-- Includo jQuery UI per l'autocomplete -->
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <title>Crea Nuova Traccia - {{ album_info.AlbumTitle }}</title>
   <style>
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
@@ -34,6 +31,26 @@
       letter-spacing: 1px;
     }
 
+    .album-info {
+      background: #f0f4f8;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid #6366f1;
+    }
+
+    .album-info h3 {
+      margin: 0 0 0.5rem 0;
+      color: #374151;
+      font-size: 1.1rem;
+    }
+
+    .album-info p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
     label {
       display: block;
       margin-bottom: 0.5rem;
@@ -41,7 +58,6 @@
       font-weight: 500;
     }
 
-    /* Applico lo stile agli input text, select e input number per avere una grafica coerente */
     input[type="text"],
     select,
     input[type="number"] {
@@ -53,6 +69,7 @@
       font-size: 1rem;
       transition: border-color 0.2s, box-shadow 0.2s;
       background: #f7faff;
+      box-sizing: border-box;
     }
 
     input[type="text"]:focus,
@@ -83,86 +100,40 @@
       transform: translateY(-2px) scale(1.01);
     }
 
-    @media (max-width: 600px) {
-      .container {
-        padding: 1.2rem 0.7rem;
-        border-radius: 10px;
-      }
-      h1 {
-        font-size: 1.2rem;
-      }
-      input[type="text"],
-      select,
-      input[type="number"],
-      button[type="submit"] {
-        font-size: 0.98rem;
-        padding: 0.7rem;
-      }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: #6366f1;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
     }
   </style>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <script>
-    // La variabile "artists" viene passata dal backend Flask e convertita in JSON
-    // Assicurati che il backend fornisca un array di oggetti formattati come:
-    // [{ "label": "Artista 1", "value": 1 }, { "label": "Artista 2", "value": 2 }, …]
-    var artists = {{ artists | tojson }};
-    var albums = {{ albums | tojson }};
-    console.log(albums);
-    $(function() {
-      $("#artist").autocomplete({
-        source: artists,
-        minLength: 2,
-        select: function(event, ui) {
-          // Imposto il valore visibile e quello nascosto usando i valori passati dall'oggetto
-          $("#artist").val(ui.item.label);
-          $("#artist_id").val(ui.item.value);
-          return false;
-        }
-      });
-    });
-
-    $(function() {
-      $("#album").autocomplete({
-        source: albums ,
-        minLength: 2,
-        select: function(event, ui) {
-          console.log(albums);
-          // Imposto il valore visibile e quello nascosto usando i valori passati dall'oggetto
-          $("#album").val(ui.item.label);
-          $("#album_id").val(ui.item.value);
-          return false;
-        }
-      });
-    });
-  </script>
 </head>
 <body>
   <div class="container">
-    <h1>Crea Nuova Traccia</h1>
+    <a href="{{ url_for('tracks', AlbumId=album_info.AlbumId) }}" class="back-link">← Torna alle tracce</a>
+    
+    <h1>Nuova Traccia</h1>
+    
+    <div class="album-info">
+      <h3>{{ album_info.AlbumTitle }}</h3>
+      <p>Artista: {{ album_info.ArtistName }}</p>
+    </div>
+    
     <form method="post">
       <div>
-        <label for="name">Nome:</label>
+        <label for="name">Nome Traccia:</label>
         <input type="text" id="name" name="name" required>
-      </div>
-
-      <div>
-        <label for="artist">Artista:</label>
-        <input type="text" id="artist" name="artist" placeholder="Cerca artista..." autocomplete="off" required>
-        <!-- Campo nascosto per memorizzare l'ID dell'artista selezionato -->
-        <input type="hidden" id="artist_id" name="artist_id">
-      </div>
-
-      <div>
-        <label for="album">Album:</label>
-        <input type="text" id="album" name="album" placeholder="Cerca album..." autocomplete="off" required>
-        <!-- Campo nascosto per memorizzare l'ID dell'album selezionato -->
-        <input type="hidden" id="album_id" name="album_id">
       </div>
 
       <div>
         <label for="media_type_id">Tipo Media:</label>
         <select id="media_type_id" name="media_type_id" required>
+          <option value="">Seleziona tipo media</option>
           {% for mt in media_types %}
             <option value="{{ mt['MediaTypeId'] }}">{{ mt['Name'] }}</option>
           {% endfor %}
@@ -181,26 +152,26 @@
 
       <div>
         <label for="composer">Compositore:</label>
-        <input type="text" id="composer" name="composer" required>
+        <input type="text" id="composer" name="composer">
       </div>
 
       <div>
-        <label for="milliseconds">Millisecondi:</label>
+        <label for="milliseconds">Durata (millisecondi):</label>
         <input type="number" id="milliseconds" name="milliseconds" required>
       </div>
 
       <div>
-        <label for="bytes">Bytes:</label>
-        <input type="number" id="bytes" name="bytes" required>
+        <label for="bytes">Dimensione (bytes):</label>
+        <input type="number" id="bytes" name="bytes">
       </div>
 
       <div>
-        <label for="unit_price">Prezzo:</label>
+        <label for="unit_price">Prezzo (€):</label>
         <input type="number" step="0.01" id="unit_price" name="unit_price" required>
       </div>
 
       <div>
-        <button type="submit">Salva</button>
+        <button type="submit">Crea Traccia</button>
       </div>
     </form>
   </div>

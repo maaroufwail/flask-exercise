@@ -63,6 +63,22 @@ def get_artists():
     except Exception as e:
         return {"success": False, "message": f"Errore durante il recupero degli artisti: {str(e)}"}
     
+# funzione per ottenere gli album di un artista
+def get_albums(ArtistId=None):
+    print(ArtistId)
+    if ArtistId == None:
+        query = "SELECT * FROM albums"
+    else:
+        query = "SELECT * FROM albums WHERE ArtistId = ?"
+    print(query)
+    try:
+        conn = get_db_connection()
+        albums = conn.execute(query, (ArtistId,)).fetchall()
+        conn.close()
+        return {"success": True, "data": albums}
+    except Exception as e:
+        return {"success": False, "message": f"Errore durante il recupero degli album: {str(e)}"}
+    
 # funzione per inserire un album ad un artista
 def insert_album(title, ArtistId):
     try:
@@ -119,13 +135,15 @@ def insert_track(track_name, album_id, media_type_id, genre_id, composer, millis
         conn = get_db_connection()
         conn.execute(
             """
-            INSERT INTO Track 
+            INSERT INTO tracks
             (Name, AlbumId, MediaTypeId, GenreId, Composer, Milliseconds, Bytes, UnitPrice)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (track_name, album_id, media_type_id, genre_id, composer, milliseconds, bytes_val, unit_price)
         )
         conn.commit()
+        conn.close()
+        return {"success": True, "message": "Track inserita con successo."}
     except Exception as e:
         return {"success": False, "message": f"Errore durante l'inserimento della Track: {str(e)}"}
 

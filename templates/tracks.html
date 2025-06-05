@@ -8,7 +8,7 @@
 <body>
         <div style=" margin: 20px;">
         <a  href="{{ url_for('list_users') }}">Torna alla Home</a>
-        <a style="float: inline-end; background-color:rgb(94, 205, 67)" href="{{ url_for('new_track') }}">Aggiungi track</a>
+        <a style="float: inline-end; background-color:rgb(94, 205, 67)" href="{{ url_for('new_track_from_album', AlbumId=AlbumId) }}">Aggiungi track</a>
     </div>
     <h1>Brani del album</h1>
     <ul>

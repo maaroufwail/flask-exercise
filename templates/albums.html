@@ -10,7 +10,7 @@
         <a  href="{{ url_for('list_users') }}">Torna alla Home</a>
         <a style="float: inline-end; background-color:rgb(94, 205, 67)" href="{{ request.path.rstrip('/') }}/insert-album">Aggiungi Album</a>
     </div>
-    <h1>Lista Album di </h1>
+    <h1>Lista Album di  {{ArtistId}}</h1>
     <ul>
         {% for album in albums %}
 
@@ -19,7 +19,7 @@
             <span class="album-title">{{ album['title'] }}</span>
             <form id="delete-album-{{ album['AlbumId'] }}" action="{{ url_for('elimina_album') }}" method="post" style="display:inline;">
                 <input type="hidden" name="AlbumId" value="{{ album['AlbumId'] }}">
-                <a href="{{ url_for('tracks', AlbumId=album['AlbumId']) }}">tracks</a>
+                <a href="{{ url_for('tracks', AlbumId=album['AlbumId']) }}">tracks per album {{album['AlbumId']}}</a>
                 <button type="button" onclick="confirmDelete('{{ album['AlbumId'] }}')">Elimina</button>
 </form>
                     {% endfor %}
