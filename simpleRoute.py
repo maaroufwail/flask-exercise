@@ -7,6 +7,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 import sqlite3
 from crudFunction import *
 
+
 import os
 
 # Percorso del database
