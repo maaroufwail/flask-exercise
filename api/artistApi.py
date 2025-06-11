@@ -19,8 +19,8 @@ def get_artist(id):
 
 @artist_bp.route('/', methods=['POST'])
 def create_artist():
-    data = request.json
-    new_artist = Artist(Name=data['Name'])
+    json_data = request.get_json()
+    new_artist = artist_schema.load(json_data)
     db.session.add(new_artist)
     db.session.commit()
     return jsonify(artist_schema.dump(new_artist)), 201

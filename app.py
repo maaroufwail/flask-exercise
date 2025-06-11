@@ -44,13 +44,13 @@ def create_app(config_object='config.Config'):
     #    (Assicurati di adattare i percorsi ai tuoi file)
     # --------------------------------------------------------
     from api.artistApi import artist_bp
-    # from routes.albums import album_bp
+    from api.albumApi import album_bp
     # from routes.tracks import track_bp
     # from routes.genres import genre_bp
     # from routes.media_types import media_type_bp
 
     app.register_blueprint(artist_bp,       url_prefix='/api/artists')
-    # app.register_blueprint(album_bp,        url_prefix='/api/albums')
+    app.register_blueprint(album_bp,        url_prefix='/api/albums')
     # app.register_blueprint(track_bp,        url_prefix='/api/tracks')
     # app.register_blueprint(genre_bp,        url_prefix='/api/genres')
     # app.register_blueprint(media_type_bp,   url_prefix='/api/media_types')
