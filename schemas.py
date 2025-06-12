@@ -15,7 +15,7 @@ from models import (
     # PlaylistTrack,
     # Employee
 )
-from app import ma, db
+from extensions import db, ma
 
 # ---------------------------------------------------------
 # 1. Schema per Artist

@@ -46,13 +46,13 @@ def create_app(config_object='config.Config'):
     from api.artistApi import artist_bp
     from api.albumApi import album_bp
     # from routes.tracks import track_bp
-    # from routes.genres import genre_bp
+    from api.genresApi import genre_bp
     # from routes.media_types import media_type_bp
 
     app.register_blueprint(artist_bp,       url_prefix='/api/artists')
     app.register_blueprint(album_bp,        url_prefix='/api/albums')
     # app.register_blueprint(track_bp,        url_prefix='/api/tracks')
-    # app.register_blueprint(genre_bp,        url_prefix='/api/genres')
+    app.register_blueprint(genre_bp,        url_prefix='/api/genres')
     # app.register_blueprint(media_type_bp,   url_prefix='/api/media_types')
 
     # --------------------------------------------------------
@@ -74,4 +74,4 @@ if __name__ == '__main__':
     app = create_app()
     toolbar = DebugToolbarExtension(app)
     # Lascio debug=True in sviluppo, in produzione disabilitalo!
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    app.run(host='127.0.0.1', port=5005, debug=True)

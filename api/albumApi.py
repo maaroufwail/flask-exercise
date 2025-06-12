@@ -24,7 +24,7 @@ def get_albums():
 
     # Opzionale: carica eager l'artista
     #query = query.options(joinedload(Album.artist))
-
+    print(actual_query)
     albums = actual_query.all()
     return jsonify(album_list_schema.dump(albums)), 200
 
